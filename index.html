@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Lead Funnel Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== SKAPA DESIGN TOKENS ===== */
+        :root {
+            /* Colors */
+            --skapa-primary: #0051ba;        /* IKEA Blue */
+            --skapa-primary-light: #1a67d8;
+            --skapa-primary-lighter: #e8f0ff;
+            --skapa-success: #00a870;        /* Green */
+            --skapa-success-light: #e8f5f0;
+            --skapa-neutral-0: #ffffff;
+            --skapa-neutral-100: #f5f5f5;
+            --skapa-neutral-200: #ebebeb;
+            --skapa-neutral-300: #d9d9d9;
+            --skapa-neutral-500: #7a7a7a;
+            --skapa-neutral-700: #333333;
+            --skapa-neutral-900: #1a1a1a;
+
+            /* Typography */
+            --skapa-font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --skapa-font-size-sm: 13px;
+            --skapa-font-size-base: 14px;
+            --skapa-font-size-lg: 16px;
+            --skapa-font-size-xl: 20px;
+            --skapa-font-size-2xl: 28px;
+
+            /* Spacing */
+            --skapa-spacing-xs: 4px;
+            --skapa-spacing-sm: 8px;
+            --skapa-spacing-md: 12px;
+            --skapa-spacing-lg: 16px;
+            --skapa-spacing-xl: 24px;
+            --skapa-spacing-2xl: 32px;
+
+            /* Border Radius */
+            --skapa-radius-sm: 4px;
+            --skapa-radius-md: 6px;
+            --skapa-radius-lg: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--skapa-font-family);
+            background: var(--skapa-neutral-100);
+            color: var(--skapa-neutral-900);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--skapa-spacing-2xl);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--skapa-spacing-2xl);
+            gap: var(--skapa-spacing-md);
+        }
+
+        .header-back {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--skapa-neutral-500);
+            padding: var(--skapa-spacing-sm);
+            border-radius: var(--skapa-radius-sm);
+            transition: all 0.2s;
+        }
+
+        .header-back:hover {
+            background: var(--skapa-neutral-200);
+            color: var(--skapa-neutral-900);
+        }
+
+        .header h1 {
+            font-size: var(--skapa-font-size-2xl);
+            font-weight: 600;
+        }
+
+        /* ===== SCREEN: CUSTOMER LIST ===== */
+        .screen-list {
+            display: block;
+        }
+
+        .screen-list.hidden {
+            display: none;
+        }
+
+        .search-container {
+            margin-bottom: var(--skapa-spacing-2xl);
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 14px;
+            font-size: var(--skapa-font-size-base);
+            border: 1px solid var(--skapa-neutral-300);
+            border-radius: var(--skapa-radius-md);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--skapa-primary);
+            box-shadow: 0 0 0 3px var(--skapa-primary-lighter);
+        }
+
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--skapa-neutral-0);
+            border-radius: var(--skapa-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .customers-table thead {
+            background: var(--skapa-neutral-100);
+            border-bottom: 1px solid var(--skapa-neutral-200);
+        }
+
+        .customers-table th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: var(--skapa-font-size-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--skapa-neutral-500);
+        }
+
+        .customers-table tbody tr {
+            border-bottom: 1px solid var(--skapa-neutral-200);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .customers-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .customers-table tbody tr:hover {
+            background: var(--skapa-primary-lighter);
+        }
+
+        .customers-table td {
+            padding: 14px 16px;
+            font-size: var(--skapa-font-size-base);
+        }
+
+        .rank-cell {
+            font-weight: 600;
+            color: var(--skapa-neutral-500);
+            width: 50px;
+        }
+
+        .name-cell {
+            font-weight: 500;
+        }
+
+        .score-cell {
+            font-weight: 600;
+            font-size: var(--skapa-font-size-lg);
+        }
+
+        .temperature-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: var(--skapa-font-size-sm);
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .temperature-badge.hot {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .temperature-badge.warm {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .temperature-badge.cool {
+            background: var(--skapa-primary-lighter);
+            color: var(--skapa-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--skapa-neutral-500);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h2 {
+            font-size: 18px;
+            margin-bottom: var(--skapa-spacing-sm);
+            color: var(--skapa-neutral-700);
+        }
+
+        /* ===== SCREEN: CUSTOMER DETAIL ===== */
+        .screen-detail {
+            display: none;
+        }
+
+        .screen-detail.active {
+            display: block;
+        }
+
+        .customer-header {
+            background: var(--skapa-neutral-0);
+            padding: var(--skapa-spacing-2xl);
+            border-radius: var(--skapa-radius-lg);
+            margin-bottom: var(--skapa-spacing-2xl);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-name {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: var(--skapa-spacing-sm);
+        }
+
+        .customer-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--skapa-spacing-lg);
+            font-size: var(--skapa-font-size-base);
+            color: var(--skapa-neutral-500);
+        }
+
+        .score-display {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--skapa-neutral-900);
+        }
+
+        /* ===== JOURNEY SECTION ===== */
+        .journey-section {
+            background: var(--skapa-neutral-0);
+            padding: var(--skapa-spacing-2xl);
+            border-radius: var(--skapa-radius-lg);
+            margin-bottom: var(--skapa-spacing-2xl);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: var(--skapa-font-size-lg);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--skapa-neutral-500);
+            margin-bottom: 20px;
+        }
+
+        .journey-visualization {
+            position: relative;
+            height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 24px;
+        }
+
+        .journey-bar {
+            position: relative;
+            height: 8px;
+            background: var(--skapa-neutral-200);
+            border-radius: var(--skapa-radius-sm);
+            overflow: visible;
+        }
+
+        .journey-progress {
+            position: absolute;
+            height: 100%;
+            background: var(--skapa-success);
+            border-radius: var(--skapa-radius-sm);
+            top: 0;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+
+        .journey-stages-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--skapa-spacing-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .stage-label {
+            flex: 1;
+            text-align: center;
+            font-size: var(--skapa-font-size-sm);
+            font-weight: 600;
+            color: var(--skapa-neutral-500);
+        }
+
+        .stage-label.active {
+            color: var(--skapa-primary);
+        }
+
+        .customer-callout {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--skapa-primary);
+            color: var(--skapa-neutral-0);
+            padding: 6px 12px;
+            border-radius: var(--skapa-radius-md);
+            font-size: 12px;
+            font-weight: 600;
+            var(--skapa-neutral-0)-space: nowrap;
+            margin-bottom: 12px;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 81, 186, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .customer-callout::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--skapa-primary);
+        }
+
+        .journey-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: var(--skapa-primary);
+            border: 3px solid var(--skapa-neutral-0);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--skapa-primary);
+            z-index: 2;
+        }
+
+        /* ===== INTERACTION HISTORY & ACTIONS LAYOUT ===== */
+        .content-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: var(--skapa-spacing-2xl);
+        }
+
+        .interactions-section {
+            background: var(--skapa-neutral-0);
+            padding: var(--skapa-spacing-2xl);
+            border-radius: var(--skapa-radius-lg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .actions-section {
+            background: var(--skapa-neutral-0);
+            padding: var(--skapa-spacing-2xl);
+            border-radius: var(--skapa-radius-lg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .interactions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .interaction-item {
+            display: flex;
+            gap: var(--skapa-spacing-lg);
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--skapa-neutral-200);
+        }
+
+        .interaction-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .interaction-date {
+            font-size: var(--skapa-font-size-sm);
+            font-weight: 600;
+            color: var(--skapa-neutral-500);
+            min-width: 80px;
+        }
+
+        .interaction-content {
+            flex: 1;
+        }
+
+        .interaction-title {
+            font-size: var(--skapa-font-size-base);
+            font-weight: 600;
+            color: var(--skapa-neutral-900);
+            margin-bottom: 4px;
+        }
+
+        .interaction-summary {
+            font-size: var(--skapa-font-size-sm);
+            color: var(--skapa-neutral-500);
+            margin-bottom: 6px;
+        }
+
+        .interaction-channel {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            background: var(--skapa-neutral-100);
+            color: var(--skapa-neutral-500);
+            border-radius: var(--skapa-radius-sm);
+        }
+
+        .actions-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--skapa-spacing-lg);
+            margin-top: var(--skapa-spacing-lg);
+        }
+
+        .action-card {
+            display: flex;
+            gap: var(--skapa-spacing-lg);
+            padding: var(--skapa-spacing-lg);
+            background: var(--skapa-neutral-100);
+            border: 1px solid var(--skapa-neutral-200);
+            border-radius: var(--skapa-radius-md);
+            transition: all 0.2s;
+        }
+
+        .action-card:hover {
+            border-color: var(--skapa-neutral-300);
+            background: var(--skapa-neutral-100);
+        }
+
+        .action-indicator {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--skapa-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--skapa-font-size-lg);
+        }
+
+        .action-indicator.message {
+            background: var(--skapa-primary-lighter);
+            color: #0284c7;
+        }
+
+        .action-indicator.call {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-size: var(--skapa-font-size-base);
+            font-weight: 600;
+            color: var(--skapa-neutral-900);
+            margin-bottom: 6px;
+        }
+
+        .action-rationale {
+            font-size: var(--skapa-font-size-sm);
+            color: var(--skapa-neutral-500);
+            margin-bottom: 10px;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 8px 14px;
+            background: var(--skapa-primary);
+            color: var(--skapa-neutral-0);
+            border: none;
+            border-radius: var(--skapa-radius-sm);
+            font-size: var(--skapa-font-size-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-button:hover {
+            background: var(--skapa-primary);
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+
+        .placeholder-note {
+            font-size: 12px;
+            color: var(--skapa-neutral-500);
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        /* ===== DOCUMENTS SECTION ===== */
+        .documents-section {
+            background: var(--skapa-neutral-0);
+            padding: var(--skapa-spacing-2xl);
+            border-radius: var(--skapa-radius-lg);
+            margin-bottom: var(--skapa-spacing-2xl);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .documents-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .document-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--skapa-neutral-100);
+            border: 1px solid var(--skapa-neutral-200);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: var(--skapa-font-size-sm);
+            color: var(--skapa-neutral-900);
+            var(--skapa-neutral-0)-space: nowrap;
+        }
+
+        .document-chip:hover {
+            border-color: var(--skapa-neutral-300);
+            background: var(--skapa-neutral-200);
+            transform: translateY(-1px);
+        }
+
+        .document-chip-icon {
+            font-size: var(--skapa-font-size-base);
+            flex-shrink: 0;
+        }
+
+        .document-chip-name {
+            font-weight: 500;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--skapa-spacing-lg);
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content-panels {
+                grid-template-columns: 1fr;
+            }
+
+            .customers-table {
+                font-size: var(--skapa-font-size-sm);
+            }
+
+            .customers-table th,
+            .customers-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="header-back" id="headerBack" aria-label="Back to customers">←</button>
+            <h1 id="headerTitle">Customers</h1>
+        </div>
+
+        <!-- SCREEN 1: CUSTOMER LIST -->
+        <div id="screenList" class="screen-list">
+            <div class="search-container">
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="Search customers by name..."
+                    aria-label="Search customers"
+                >
+            </div>
+
+            <table class="customers-table" id="customersTable" role="region" aria-live="polite">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Lead Score</th>
+                        <th>Temperature</th>
+                    </tr>
+                </thead>
+                <tbody id="customersTableBody">
+                </tbody>
+            </table>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">🔍</div>
+                <h2>No customers found</h2>
+                <p>Try adjusting your search</p>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: CUSTOMER DETAIL -->
+        <div id="screenDetail" class="screen-detail">
+            <!-- Customer Header -->
+            <div class="customer-header">
+                <div class="customer-name" id="detailCustomerName">John Smith</div>
+                <div class="customer-meta">
+                    <span>Lead Score:</span>
+                    <span class="score-display" id="detailLeadScore">92</span>
+                    <span>/100</span>
+                </div>
+            </div>
+
+            <!-- Journey Section -->
+            <div class="journey-section">
+                <div class="section-title">Customer Journey</div>
+                <div class="journey-visualization" id="journeyVisualization">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Documents Section -->
+            <div class="documents-section">
+                <div class="section-title">Documents</div>
+                <div class="documents-grid" id="documentsGrid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Interaction History & Suggested Actions (Side by Side) -->
+            <div class="content-panels">
+                <div class="interactions-section">
+                    <div class="section-title">Interaction History</div>
+                    <div class="interactions-list" id="interactionsList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="actions-section">
+                    <div class="section-title">Suggested Next Steps</div>
+                    <div class="placeholder-note">
+                        ℹ️ These actions are illustrative placeholders and do not send messages or schedule calls.
+                    </div>
+                    <div class="actions-list" id="actionsList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample customer data
+        const customers = [
+            {
+                id: '1',
+                name: 'John Smith',
+                leadScore: 92,
+                temperature: 'hot',
+                currentStage: 'choosing',
+                lastContactAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                interactions: [
+                    {
+                        id: 'int-1',
+                        occurredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Compared two kitchen layouts',
+                        summary: 'Reviewed side-by-side comparison of modern and traditional designs.',
+                        channel: 'email'
+                    },
+                    {
+                        id: 'int-2',
+                        occurredAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Asked about kitchen pricing',
+                        summary: 'Requested detailed pricing information for premium kitchen options.',
+                        channel: 'chat'
+                    },
+                    {
+                        id: 'int-3',
+                        occurredAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Saved three kitchen designs',
+                        summary: 'Bookmarked contemporary, Scandinavian, and rustic kitchen designs.',
+                        channel: 'web'
+                    }
+                ],
+                suggestedActions: [
+                    {
+                        id: 'action-1',
+                        title: 'Send a message with pricing details',
+                        rationale: 'John asked about kitchen pricing 5 days ago. Responding with detailed pricing information addresses his key concern.',
+                        actionType: 'send_message',
+                        icon: '💬'
+                    },
+                    {
+                        id: 'action-2',
+                        title: 'Schedule a call to compare layouts',
+                        rationale: 'John recently compared two layouts. A guided call can help him make a confident decision and move toward committing.',
+                        actionType: 'schedule_call',
+                        icon: '📞'
+                    }
+                ],
+                documents: [
+                    {
+                        id: 'doc-1',
+                        name: 'Kitchen Layout Option A',
+                        type: 'pdf',
+                        icon: '📄',
+                        sharedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+                        size: '2.4 MB'
+                    },
+                    {
+                        id: 'doc-2',
+                        name: 'Kitchen Layout Option B',
+                        type: 'pdf',
+                        icon: '📄',
+                        sharedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+                        size: '2.1 MB'
+                    },
+                    {
+                        id: 'doc-3',
+                        name: 'Kitchen Measurements',
+                        type: 'pdf',
+                        icon: '📏',
+                        sharedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                        size: '1.8 MB'
+                    },
+                    {
+                        id: 'doc-4',
+                        name: 'Quote Option A',
+                        type: 'pdf',
+                        icon: '💰',
+                        sharedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        size: '0.9 MB'
+                    },
+                    {
+                        id: 'doc-5',
+                        name: 'Quote Option B',
+                        type: 'pdf',
+                        icon: '💰',
+                        sharedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        size: '0.95 MB'
+                    }
+                ]
+            },
+            {
+                id: '2',
+                name: 'Maya Andersson',
+                leadScore: 86,
+                temperature: 'hot',
+                currentStage: 'exploration',
+                lastContactAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                interactions: [
+                    {
+                        id: 'int-4',
+                        occurredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Browsed product catalog',
+                        summary: 'Explored multiple product categories for 45 minutes.',
+                        channel: 'web'
+                    }
+                ],
+                suggestedActions: [
+                    {
+                        id: 'action-3',
+                        title: 'Send personalized product recommendations',
+                        rationale: 'Maya spent significant time browsing. Recommendations based on her browsing history can accelerate interest.',
+                        actionType: 'send_message',
+                        icon: '💬'
+                    }
+                ]
+            },
+            {
+                id: '3',
+                name: 'Oliver Berg',
+                leadScore: 74,
+                temperature: 'warm',
+                currentStage: 'exploration',
+                lastContactAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                interactions: [
+                    {
+                        id: 'int-5',
+                        occurredAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Opened product comparison email',
+                        summary: 'Engaged with detailed product comparison content.',
+                        channel: 'email'
+                    }
+                ],
+                suggestedActions: [
+                    {
+                        id: 'action-4',
+                        title: 'Follow up with related solutions',
+                        rationale: 'Oliver showed interest in product comparisons. Suggest related solutions that complement his interests.',
+                        actionType: 'send_message',
+                        icon: '💬'
+                    }
+                ]
+            },
+            {
+                id: '4',
+                name: 'Sara Lind',
+                leadScore: 61,
+                temperature: 'warm',
+                currentStage: 'exploration',
+                lastContactAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                interactions: [
+                    {
+                        id: 'int-6',
+                        occurredAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Attended webinar',
+                        summary: 'Participated in product overview webinar.',
+                        channel: 'event'
+                    }
+                ],
+                suggestedActions: [
+                    {
+                        id: 'action-5',
+                        title: 'Reconnect with webinar follow-up resources',
+                        rationale: 'Sara attended a webinar 10 days ago. Sharing additional resources can help move the conversation forward.',
+                        actionType: 'send_message',
+                        icon: '💬'
+                    }
+                ]
+            },
+            {
+                id: '5',
+                name: 'Erik Johansson',
+                leadScore: 38,
+                temperature: 'cool',
+                currentStage: 'exploration',
+                lastContactAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
+                interactions: [
+                    {
+                        id: 'int-7',
+                        occurredAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
+                        title: 'Downloaded product brochure',
+                        summary: 'Downloaded PDF brochure but has not engaged further.',
+                        channel: 'web'
+                    }
+                ],
+                suggestedActions: [
+                    {
+                        id: 'action-6',
+                        title: 'Check in with a gentle reminder',
+                        rationale: 'Erik downloaded materials 3 weeks ago with limited follow-up. A gentle check-in can re-engage interest.',
+                        actionType: 'send_message',
+                        icon: '💬'
+                    }
+                ]
+            }
+        ];
+
+        const stages = [
+            { id: 'exploration', name: 'Exploration &\nInspiration', icon: '🔍' },
+            { id: 'choosing', name: 'Choosing', icon: '⚖️' },
+            { id: 'committing', name: 'Committing', icon: '✓' }
+        ];
+
+        // DOM elements
+        const screenList = document.getElementById('screenList');
+        const screenDetail = document.getElementById('screenDetail');
+        const headerTitle = document.getElementById('headerTitle');
+        const headerBack = document.getElementById('headerBack');
+        const searchInput = document.getElementById('searchInput');
+        const customersTableBody = document.getElementById('customersTableBody');
+        const emptyState = document.getElementById('emptyState');
+
+        let currentCustomer = null;
+
+        // Render customer list
+        function renderCustomerList(filter = '') {
+            const filtered = customers.filter(c =>
+                c.name.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                customersTableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            customersTableBody.innerHTML = filtered
+                .map((customer, index) => `
+                    <tr data-customer-id="${customer.id}" style="cursor: pointer;">
+                        <td class="rank-cell">${index + 1}</td>
+                        <td class="name-cell">${customer.name}</td>
+                        <td class="score-cell">${customer.leadScore}<span style="color: var(--skapa-neutral-500); font-weight: 400;">/ 100</span></td>
+                        <td>
+                            <span class="temperature-badge ${customer.temperature}">
+                                ${customer.temperature.charAt(0).toUpperCase() + customer.temperature.slice(1)}
+                            </span>
+                        </td>
+                    </tr>
+                `)
+                .join('');
+
+            // Add click handlers
+            customersTableBody.querySelectorAll('tr').forEach(row => {
+                row.addEventListener('click', () => {
+                    const customerId = row.dataset.customerId;
+                    showCustomerDetail(customerId);
+                });
+            });
+        }
+
+        // Format time ago
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}d ago`;
+            const weeks = Math.floor(days / 7);
+            if (weeks < 4) return `${weeks}w ago`;
+            return `${Math.floor(days / 30)}mo ago`;
+        }
+
+        // Show customer detail screen
+        function showCustomerDetail(customerId) {
+            currentCustomer = customers.find(c => c.id === customerId);
+            if (!currentCustomer) return;
+
+            // Update header
+            headerTitle.textContent = currentCustomer.name;
+            headerBack.style.display = 'block';
+
+            // Update customer info
+            document.getElementById('detailCustomerName').textContent = currentCustomer.name;
+            document.getElementById('detailLeadScore').textContent = currentCustomer.leadScore;
+
+            // Render journey
+            renderJourney();
+
+            // Render interactions
+            renderInteractions();
+
+            // Render actions
+            renderActions();
+
+            // Render documents
+            renderDocuments();
+
+            // Switch screens
+            screenList.classList.add('hidden');
+            screenDetail.classList.add('active');
+        }
+
+        // Render journey stages
+        function renderJourney() {
+            const journeyVisualization = document.getElementById('journeyVisualization');
+            const stageIndex = stages.findIndex(s => s.id === currentCustomer.currentStage);
+
+            // Calculate progress percentage
+            const progressPercent = ((stageIndex + 1) / stages.length) * 100;
+
+            let html = `
+                <div class="journey-bar">
+                    <div class="journey-progress" style="width: ${progressPercent}%"></div>
+                    <div class="journey-marker" style="left: ${progressPercent}%">
+                        <div class="customer-callout">${currentCustomer.name}</div>
+                    </div>
+                </div>
+                <div class="journey-stages-labels">
+            `;
+
+            stages.forEach((stage, index) => {
+                const isActive = index === stageIndex;
+                html += `<div class="stage-label ${isActive ? 'active' : ''}">${stage.name}</div>`;
+            });
+
+            html += `</div>`;
+
+            journeyVisualization.innerHTML = html;
+        }
+
+        // Render interaction history
+        function renderInteractions() {
+            const interactionsList = document.getElementById('interactionsList');
+
+            interactionsList.innerHTML = currentCustomer.interactions
+                .sort((a, b) => new Date(b.occurredAt) - new Date(a.occurredAt))
+                .map(interaction => `
+                    <div class="interaction-item">
+                        <div class="interaction-date">${formatTimeAgo(interaction.occurredAt)}</div>
+                        <div class="interaction-content">
+                            <div class="interaction-title">${interaction.title}</div>
+                            <div class="interaction-summary">${interaction.summary}</div>
+                            <span class="interaction-channel">${interaction.channel}</span>
+                        </div>
+                    </div>
+                `)
+                .join('');
+        }
+
+        // Render suggested actions
+        function renderActions() {
+            const actionsList = document.getElementById('actionsList');
+
+            actionsList.innerHTML = currentCustomer.suggestedActions
+                .map(action => `
+                    <div class="action-card">
+                        <div class="action-indicator ${action.actionType === 'send_message' ? 'message' : 'call'}">
+                            ${action.icon}
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">${action.title}</div>
+                            <div class="action-rationale">${action.rationale}</div>
+                            <button class="action-button">${action.actionType === 'send_message' ? 'Send Message' : 'Schedule Call'}</button>
+                            <div class="placeholder-note">Placeholder – no action taken</div>
+                        </div>
+                    </div>
+                `)
+                .join('');
+
+            // Add click handlers for buttons (placeholders)
+            document.querySelectorAll('.action-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('This is a placeholder button. In production, this would send a message or schedule a call.');
+                });
+            });
+        }
+
+        // Render documents
+        function renderDocuments() {
+            const documentsGrid = document.getElementById('documentsGrid');
+
+            if (!currentCustomer.documents || currentCustomer.documents.length === 0) {
+                documentsGrid.innerHTML = '<p style="color: var(--skapa-neutral-500); font-size: var(--skapa-font-size-base);">No documents shared yet</p>';
+                return;
+            }
+
+            documentsGrid.innerHTML = currentCustomer.documents
+                .map(doc => `
+                    <div class="document-chip" title="Click to download">
+                        <span class="document-chip-name">${doc.name}</span>
+                    </div>
+                `)
+                .join('');
+
+            // Add click handlers
+            document.querySelectorAll('.document-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    alert('In production, this would download the document.');
+                });
+            });
+        }
+
+        // Back to list
+        function backToList() {
+            currentCustomer = null;
+            headerTitle.textContent = 'Customers';
+            headerBack.style.display = 'none';
+            screenDetail.classList.remove('active');
+            screenList.classList.remove('hidden');
+            renderCustomerList(searchInput.value);
+        }
+
+        // Event listeners
+        headerBack.addEventListener('click', backToList);
+        searchInput.addEventListener('input', (e) => {
+            renderCustomerList(e.target.value);
+        });
+
+        // Initial render
+        renderCustomerList();
+    </script>
+</body>
+</html>
