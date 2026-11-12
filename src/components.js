@@ -5,32 +5,13 @@
 
 // ===== TEMPERATURE BADGE =====
 export function renderTemperatureBadge(temperature) {
-  const colors = {
-    hot: { bg: '#fee2e2', text: '#dc2626' },
-    warm: { bg: '#fef3c7', text: '#d97706' },
-    cool: { bg: '#e8f0ff', text: '#0051ba' },
-  };
-
-  const color = colors[temperature] || colors.hot;
   const label = temperature.charAt(0).toUpperCase() + temperature.slice(1);
-
-  return `
-    <div class="temperature-badge ${temperature}" style="
-      background: ${color.bg};
-      color: ${color.text};
-    ">
-      ${label}
-    </div>
-  `;
+  return `<skapa-badge temperature="${temperature}">${label}</skapa-badge>`;
 }
 
 // ===== DOCUMENT CHIP =====
 export function renderDocumentChip(documentName) {
-  return `
-    <div class="document-chip" title="Click to download">
-      <span class="document-chip-name">${documentName}</span>
-    </div>
-  `;
+  return `<skapa-chip>${documentName}</skapa-chip>`;
 }
 
 // ===== JOURNEY VISUALIZATION =====

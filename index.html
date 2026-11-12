@@ -695,23 +695,18 @@
         </div>
     </div>
 
+    <script src="src/skapa-components.js"></script>
     <script>
         // ===== SKAPA DESIGN SYSTEM COMPONENTS =====
-        // Reusable component functions used throughout the prototype
+        // Reusable component functions using Web Components
         
         function renderTemperatureBadge(temperature) {
-          const colors = {
-            hot: { bg: '#fee2e2', text: '#dc2626' },
-            warm: { bg: '#fef3c7', text: '#d97706' },
-            cool: { bg: '#e8f0ff', text: '#0051ba' },
-          };
-          const color = colors[temperature] || colors.hot;
           const label = temperature.charAt(0).toUpperCase() + temperature.slice(1);
-          return `<div class="temperature-badge ${temperature}" style="background: ${color.bg}; color: ${color.text};">${label}</div>`;
+          return `<skapa-badge temperature="${temperature}">${label}</skapa-badge>`;
         }
 
         function renderDocumentChip(documentName) {
-          return `<div class="document-chip" title="Click to download"><span class="document-chip-name">${documentName}</span></div>`;
+          return `<skapa-chip>${documentName}</skapa-chip>`;
         }
 
         function renderInteractionItem(interaction) {
@@ -739,7 +734,8 @@
         }
 
         function renderActionCard(action) {
-          return `<div class="action-card"><div class="action-indicator ${action.actionType === 'send_message' ? 'message' : 'call'}">${action.icon}</div><div class="action-content"><div class="action-title">${action.title}</div><div class="action-rationale">${action.rationale}</div><button class="action-button" data-action-type="${action.actionType}">${action.actionType === 'send_message' ? 'Send Message' : 'Schedule Call'}</button><div class="action-placeholder">Placeholder – no action taken</div></div></div>`;
+          const buttonLabel = action.actionType === 'send_message' ? 'Send Message' : 'Schedule Call';
+          return `<div class="action-card"><div class="action-indicator ${action.actionType === 'send_message' ? 'message' : 'call'}">${action.icon}</div><div class="action-content"><div class="action-title">${action.title}</div><div class="action-rationale">${action.rationale}</div><skapa-button variant="primary" data-action-type="${action.actionType}">${buttonLabel}</skapa-button><div class="action-placeholder">Placeholder – no action taken</div></div></div>`;
         }
 
         function renderJourneyVisualization(stages, currentStage, customerName) {
@@ -1075,8 +1071,8 @@
                 .join('');
 
             // Add click handlers for buttons (placeholders)
-            document.querySelectorAll('.action-button').forEach(button => {
-                button.addEventListener('click', (e) => {
+            document.querySelectorAll('skapa-button').forEach(button => {
+                button.addEventListener('skapa-click', (e) => {
                     e.preventDefault();
                     alert('This is a placeholder button. In production, this would send a message or schedule a call.');
                 });
